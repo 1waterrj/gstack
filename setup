@@ -85,7 +85,7 @@ NO_TEAM_MODE=0
 PLAN_TUNE_HOOKS_MODE=""   # "" = resolve from env/config/prompt; "yes"/"no" = explicit
 while [ $# -gt 0 ]; do
   case "$1" in
-    --host) [ -z "$2" ] && echo "Missing value for --host (expected claude, codex, kiro, factory, opencode, openclaw, hermes, gbrain, or auto)" >&2 && exit 1; HOST="$2"; shift 2 ;;
+    --host) [ -z "$2" ] && echo "Missing value for --host (expected claude, codex, kiro, factory, opencode, cursor, openclaw, hermes, gbrain, or auto)" >&2 && exit 1; HOST="$2"; shift 2 ;;
     --host=*) HOST="${1#--host=}"; shift ;;
     --local) LOCAL_INSTALL=1; shift ;;
     --prefix)    SKILL_PREFIX=1; SKILL_PREFIX_FLAG=1; shift ;;
@@ -101,7 +101,7 @@ while [ $# -gt 0 ]; do
 done
 
 case "$HOST" in
-  claude|codex|kiro|factory|opencode|auto) ;;
+  claude|codex|kiro|factory|opencode|cursor|auto) ;;
   openclaw)
     echo ""
     echo "OpenClaw integration uses a different model — OpenClaw spawns Claude Code"
@@ -136,7 +136,7 @@ case "$HOST" in
     echo "GBrain setup and brain skills ship from the GBrain repo."
     echo ""
     exit 0 ;;
-  *) echo "Unknown --host value: $HOST (expected claude, codex, kiro, factory, opencode, openclaw, hermes, gbrain, or auto)" >&2; exit 1 ;;
+  *) echo "Unknown --host value: $HOST (expected claude, codex, kiro, factory, opencode, cursor, openclaw, hermes, gbrain, or auto)" >&2; exit 1 ;;
 esac
 
 # ─── Resolve skill prefix preference ─────────────────────────
@@ -200,14 +200,16 @@ INSTALL_CODEX=0
 INSTALL_KIRO=0
 INSTALL_FACTORY=0
 INSTALL_OPENCODE=0
+INSTALL_CURSOR=0
 if [ "$HOST" = "auto" ]; then
   command -v claude >/dev/null 2>&1 && INSTALL_CLAUDE=1
   command -v codex >/dev/null 2>&1 && INSTALL_CODEX=1
   command -v kiro-cli >/dev/null 2>&1 && INSTALL_KIRO=1
   command -v droid >/dev/null 2>&1 && INSTALL_FACTORY=1
   command -v opencode >/dev/null 2>&1 && INSTALL_OPENCODE=1
+  command -v cursor >/dev/null 2>&1 && INSTALL_CURSOR=1
   # If none found, default to claude
-  if [ "$INSTALL_CLAUDE" -eq 0 ] && [ "$INSTALL_CODEX" -eq 0 ] && [ "$INSTALL_KIRO" -eq 0 ] && [ "$INSTALL_FACTORY" -eq 0 ] && [ "$INSTALL_OPENCODE" -eq 0 ]; then
+  if [ "$INSTALL_CLAUDE" -eq 0 ] && [ "$INSTALL_CODEX" -eq 0 ] && [ "$INSTALL_KIRO" -eq 0 ] && [ "$INSTALL_FACTORY" -eq 0 ] && [ "$INSTALL_OPENCODE" -eq 0 ] && [ "$INSTALL_CURSOR" -eq 0 ]; then
     INSTALL_CLAUDE=1
   fi
 elif [ "$HOST" = "claude" ]; then
@@ -220,6 +222,8 @@ elif [ "$HOST" = "factory" ]; then
   INSTALL_FACTORY=1
 elif [ "$HOST" = "opencode" ]; then
   INSTALL_OPENCODE=1
+elif [ "$HOST" = "cursor" ]; then
+  INSTALL_CURSOR=1
 fi
 
 migrate_direct_codex_install() {
@@ -940,6 +944,20 @@ link_factory_skill_dirs() {
   fi
 }
 
+link_cursor_commands() {
+  local gstack_dir="$1"
+  local out_root="$2"   # $HOME for global, repo root for --team
+
+  echo "  Generating .cursor/ skill docs + native commands..."
+  ( cd "$gstack_dir" && bun run gen:skill-docs --host cursor ) \
+    || { echo "  warning: 'gen:skill-docs --host cursor' failed — run it manually" >&2; return 1; }
+  ( cd "$gstack_dir" && bun run gen:cursor-commands --out "$out_root" ) \
+    || { echo "  warning: 'gen:cursor-commands' failed — run it manually" >&2; return 1; }
+
+  echo "  Cursor slash commands installed to $out_root/.cursor/commands/"
+  echo "  Open Cursor, type / in chat, and pick a /gstack-* command."
+}
+
 link_opencode_skill_dirs() {
   local gstack_dir="$1"
   local skills_dir="$2"
@@ -1191,6 +1209,16 @@ if [ "$INSTALL_OPENCODE" -eq 1 ]; then
   echo "gstack ready (opencode)."
   echo "  browse: $BROWSE_BIN"
   echo "  opencode skills: $OPENCODE_SKILLS"
+fi
+
+# 6d. Install for Cursor — native .cursor/commands/*.md slash commands.
+if [ "$INSTALL_CURSOR" -eq 1 ]; then
+  if [ "$TEAM_MODE" -eq 1 ]; then
+    link_cursor_commands "$SOURCE_GSTACK_DIR" "$(pwd)"
+  else
+    link_cursor_commands "$SOURCE_GSTACK_DIR" "$HOME"
+  fi
+  echo "gstack ready (cursor)."
 fi
 
 # 7. Create .agents/ sidecar symlinks for the real Codex skill target.
