@@ -180,7 +180,7 @@ function rewriteSectionBase(content: string): string {
 
 // Re-export local copy for use in this file (matches codex-helpers.ts)
 // Accepts optional frontmatter name to support directory/invocation name divergence
-function externalSkillName(skillDir: string, frontmatterName?: string): string {
+export function externalSkillName(skillDir: string, frontmatterName?: string): string {
   // Root skill (skillDir === '' or '.') always maps to 'gstack' regardless of frontmatter
   if (skillDir === '.' || skillDir === '') return 'gstack';
   // Use frontmatter name when it differs from directory name (e.g., run-tests/ with name: test)
@@ -795,7 +795,7 @@ function processExternalHost(
   return { content: result, outputPath, outputDir, symlinkLoop };
 }
 
-function processTemplate(tmplPath: string, host: Host = 'claude'): { outputPath: string; content: string; symlinkLoop?: boolean; catalogParts?: CatalogParts | null } {
+export function processTemplate(tmplPath: string, host: Host = 'claude'): { outputPath: string; content: string; symlinkLoop?: boolean; catalogParts?: CatalogParts | null } {
   const tmplContent = fs.readFileSync(tmplPath, 'utf-8');
   const relTmplPath = path.relative(ROOT, tmplPath);
   let outputPath = tmplPath.replace(/\.tmpl$/, '');
@@ -931,6 +931,10 @@ function findTemplates(): string[] {
   return discoverTemplates(ROOT).map(t => path.join(ROOT, t.tmpl));
 }
 
+// Driver: only run when invoked directly (bun run scripts/gen-skill-docs.ts).
+// Guarded so importing this module (e.g. for processTemplate/externalSkillName
+// from gen-cursor-commands.ts, or require() in tests) has no side effects.
+if (import.meta.main) {
 const ALL_HOSTS: Host[] = ALL_HOST_NAMES as Host[];
 const hostsToRun: Host[] = HOST_ARG_VAL === 'all' ? ALL_HOSTS : [HOST];
 const failures: { host: string; error: Error }[] = [];
@@ -1228,3 +1232,4 @@ if (!DRY_RUN) {
     }
   })();
 }
+} // end if (import.meta.main)
