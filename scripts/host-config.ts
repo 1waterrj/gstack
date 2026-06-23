@@ -109,6 +109,19 @@ export interface HostConfig {
   staticFiles?: Record<string, string>;
   /** Optional path to host-adapter module for complex transformations. */
   adapter?: string;
+
+  /**
+   * Cursor-only: emit native .cursor/commands/*.md slash commands (and an
+   * optional .cursor/rules/gstack.mdc routing rule) in addition to the
+   * generated skill docs. No other host sets this; consumed by
+   * scripts/gen-cursor-commands.ts.
+   */
+  cursorCommands?: {
+    /** Emit native .cursor/commands/*.md files. */
+    enabled: boolean;
+    /** Also emit .cursor/rules/gstack.mdc routing rule. */
+    emitRoutingRule: boolean;
+  };
 }
 
 // --- Validation ---

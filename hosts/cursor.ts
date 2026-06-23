@@ -43,6 +43,11 @@ const cursor: HostConfig = {
   },
 
   learningsMode: 'basic',
+
+  cursorCommands: {
+    enabled: true,
+    emitRoutingRule: true,
+  },
 };
 
 export default cursor;

@@ -535,4 +535,13 @@ describe('host config correctness', () => {
       expect(config.runtimeRoot.globalSymlinks).toContain('ETHOS.md');
     }
   });
+
+  test('cursor host enables native command generation', () => {
+    expect(cursor.cursorCommands?.enabled).toBe(true);
+    expect(cursor.cursorCommands?.emitRoutingRule).toBe(true);
+  });
+
+  test('cursor config still validates', () => {
+    expect(validateHostConfig(cursor)).toEqual([]);
+  });
 });
