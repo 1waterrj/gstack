@@ -113,6 +113,34 @@ Resolution order for a ticket:
 No vendor is hardcoded; the commands are whatever the team wires (a curl, a CLI,
 a `cat file.csv`).
 
+### Canonical ticket contract (interlock point)
+
+To keep intake well-defined regardless of source — and so a future in-app
+**ticket-submission scaffolder** (separate skill, see Follow-ups) can emit
+tickets `/support` ingests with zero glue — the skill defines a canonical
+inbound ticket shape. `support_fetch <id>` should return one such object (JSON
+on stdout); `support_list` returns an array of ids or `{id, subject}` objects.
+The skill is tolerant: missing optional fields are fine, and free-form text
+(paste) is accepted and mapped onto `subject`/`body` heuristically.
+
+```json
+{
+  "id": "string (source ticket id)",
+  "subject": "string",
+  "body": "string (the customer's message)",
+  "channel": "email | web | chat | other (optional)",
+  "created_at": "ISO8601 (optional)",
+  "customer_ref": "opaque id or email — used for dedupe/repeat detection only, never persisted raw (optional)",
+  "metadata": { "free": "object (optional)" }
+}
+```
+
+This contract is documentation + a parser in the skill; it is intentionally NOT
+a hard schema validator (a clone's source may be a CSV row). The scaffolder
+piece will generate an in-app submission feature that POSTs/writes exactly this
+shape, so the loop closes: app collects ticket → `support_fetch` reads it →
+`/support` triages.
+
 ### Classification
 
 On intake the agent assigns, from the ticket text:
@@ -209,5 +237,9 @@ Manual verification: run `/support` on a sample ticket (paste), confirm a draft
 
 - A bundled vendor adapter (Zendesk/Pylon/etc.) or an auto-send mode.
 - Trained sentiment model; cross-project support analytics.
+- **In-app ticket-submission scaffolder** (planned 3rd piece, own spec): a skill
+  that builds a support-intake feature (form/endpoint/store) into the user's app,
+  framework-agnostic (reads the stack from CLAUDE.md), emitting tickets in the
+  Canonical ticket contract above so `/support` ingests them with no glue.
 - Optional later: feed roll-up themes into `/office-hours` or `/plan-ceo-review`
   for prioritization.
