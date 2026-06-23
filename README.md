@@ -115,12 +115,17 @@ Or target a specific agent with `./setup --host <name>`:
 |-------|------|-------------------|
 | OpenAI Codex CLI | `--host codex` | `~/.codex/skills/gstack-*/` |
 | OpenCode | `--host opencode` | `~/.config/opencode/skills/gstack-*/` |
-| Cursor | `--host cursor` | `~/.cursor/skills/gstack-*/` |
+| Cursor | `--host cursor` | `~/.cursor/commands/gstack-*.md` (native slash commands) + `~/.cursor/skills/gstack/` |
 | Factory Droid | `--host factory` | `~/.factory/skills/gstack-*/` |
 | Slate | `--host slate` | `~/.slate/skills/gstack-*/` |
 | Kiro | `--host kiro` | `~/.kiro/skills/gstack-*/` |
 | Hermes | `--host hermes` | `~/.hermes/skills/gstack-*/` |
 | GBrain (mod) | `--host gbrain` | `~/.gbrain/skills/gstack-*/` |
+
+On Cursor, gstack installs as **native slash commands** — type `/` in chat and pick a
+`/gstack-*` command (e.g. `/gstack-review`, `/gstack-qa`, `/gstack-ship`). Each command
+carries the full skill instructions, and a `.cursor/rules/gstack.mdc` routing rule helps
+Cursor reach for the right one.
 
 **Want to add support for another agent?** See [docs/ADDING_A_HOST.md](docs/ADDING_A_HOST.md).
 It's one TypeScript config file, zero code changes.

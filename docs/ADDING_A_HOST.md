@@ -161,6 +161,7 @@ Key fields:
 | `coAuthorTrailer` | Git co-author string for commits |
 | `boundaryInstruction` | Anti-prompt-injection warning for cross-model invocations |
 | `adapter` | Path to adapter module for complex transformations |
+| `cursorCommands` | Cursor-only: also emit native `.cursor/commands/*.md` slash commands + a `.cursor/rules/gstack.mdc` routing rule (see `scripts/gen-cursor-commands.ts`) |
 
 ## Adapter pattern (for hosts with different tool models)
 
