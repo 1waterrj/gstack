@@ -932,8 +932,11 @@ function findTemplates(): string[] {
 }
 
 // Driver: only run when invoked directly (bun run scripts/gen-skill-docs.ts).
-// Guarded so importing this module (e.g. for processTemplate/externalSkillName
-// from gen-cursor-commands.ts, or require() in tests) has no side effects.
+// The process.argv / config consts above still run at import time, but they
+// default safely when no --host/--model/--out-dir flags are present, so
+// importing this module (e.g. processTemplate/externalSkillName from
+// gen-cursor-commands.ts, or require() in tests) performs no disk writes.
+// Only the generation/write loop below is guarded.
 if (import.meta.main) {
 const ALL_HOSTS: Host[] = ALL_HOST_NAMES as Host[];
 const hostsToRun: Host[] = HOST_ARG_VAL === 'all' ? ALL_HOSTS : [HOST];

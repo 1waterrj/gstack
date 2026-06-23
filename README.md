@@ -125,7 +125,9 @@ Or target a specific agent with `./setup --host <name>`:
 On Cursor, gstack installs as **native slash commands** — type `/` in chat and pick a
 `/gstack-*` command (e.g. `/gstack-review`, `/gstack-qa`, `/gstack-ship`). Each command
 carries the full skill instructions, and a `.cursor/rules/gstack.mdc` routing rule helps
-Cursor reach for the right one.
+Cursor reach for the right one. (For `./setup` (auto mode) to detect Cursor, install the
+`cursor` CLI shim first: Cursor → Command Palette → "Install 'cursor' command". Otherwise
+target it explicitly with `./setup --host cursor`.)
 
 **Want to add support for another agent?** See [docs/ADDING_A_HOST.md](docs/ADDING_A_HOST.md).
 It's one TypeScript config file, zero code changes.

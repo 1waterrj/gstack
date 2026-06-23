@@ -108,7 +108,7 @@ export function generateCursorCommands(opts: { outRoot: string }): {
 if (import.meta.main) {
   const outArg = process.argv.find(a => a.startsWith('--out'));
   const outRoot = outArg
-    ? (outArg.includes('=') ? outArg.split('=')[1] : process.argv[process.argv.indexOf(outArg) + 1])
+    ? (outArg.includes('=') ? outArg.slice(outArg.indexOf('=') + 1) : process.argv[process.argv.indexOf(outArg) + 1])
     : (process.env.HOME || os.homedir());
   const { commandFiles, rulePath } = generateCursorCommands({ outRoot });
   for (const f of commandFiles) console.log(`GENERATED: ${f}`);
