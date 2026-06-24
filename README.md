@@ -1,5 +1,13 @@
 # gstack
 
+> **Fork note (`1waterrj/gstack`).** This is a fork of [`garrytan/gstack`](https://github.com/garrytan/gstack) that adds two things on top of upstream:
+> - **Cursor-native slash commands** — `./setup --host cursor` installs every gstack skill as a real `/gstack-*` command in Cursor (`~/.cursor/commands/`), plus a `.cursor/rules/gstack.mdc` routing rule. Not just Claude Code.
+> - **`/support`** — a vendor-neutral app support agent: triage a ticket → investigate → draft a customer reply (never auto-sent) → log it; `--queue` batch-triages open tickets, `--rollup` summarizes themes, sentiment, and contract/churn risk for Product/Eng.
+>
+> Everything below is Garry Tan's original gstack and its story — kept intact, with full credit to upstream.
+
+---
+
 > "I don't think I've typed like a line of code probably since December, basically, which is an extremely large change." — [Andrej Karpathy](https://fortune.com/2026/03/21/andrej-karpathy-openai-cofounder-ai-agents-coding-state-of-psychosis-openclaw/), No Priors podcast, March 2026
 
 When I heard Karpathy say this, I wanted to find out how. How does one person ship like a team of twenty? Peter Steinberger built [OpenClaw](https://github.com/openclaw/openclaw) — 247K GitHub stars — essentially solo with AI agents. The revolution is here. A single builder with the right tooling can move faster than a traditional team.
@@ -48,7 +56,9 @@ Fork it. Improve it. Make it yours. And if you want to hate on free open source 
 
 Open Claude Code and paste this. Claude does the rest.
 
-> Install gstack: run **`git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`** then add a "gstack" section to CLAUDE.md that says to use the /browse skill from gstack for all web browsing, never use mcp\_\_claude-in-chrome\_\_\* tools, and lists the available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /design-shotgun, /design-html, /review, /ship, /land-and-deploy, /canary, /benchmark, /browse, /connect-chrome, /qa, /qa-only, /design-review, /setup-browser-cookies, /setup-deploy, /setup-gbrain, /retro, /investigate, /document-release, /document-generate, /codex, /cso, /autoplan, /plan-devex-review, /devex-review, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade, /learn. Then ask the user if they also want to add gstack to the current project so teammates get it.
+> Install gstack: run **`git clone --single-branch --depth 1 https://github.com/1waterrj/gstack.git ~/.claude/skills/gstack && cd ~/.claude/skills/gstack && ./setup`** then add a "gstack" section to CLAUDE.md that says to use the /browse skill from gstack for all web browsing, never use mcp\_\_claude-in-chrome\_\_\* tools, and lists the available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review, /design-consultation, /design-shotgun, /design-html, /review, /ship, /land-and-deploy, /canary, /benchmark, /browse, /connect-chrome, /qa, /qa-only, /design-review, /setup-browser-cookies, /setup-deploy, /setup-gbrain, /retro, /investigate, /document-release, /document-generate, /codex, /cso, /autoplan, /plan-devex-review, /devex-review, /careful, /freeze, /guard, /unfreeze, /gstack-upgrade, /learn, /support. Then ask the user if they also want to add gstack to the current project so teammates get it.
+
+> **Using Cursor instead of (or alongside) Claude Code?** After cloning, run **`./setup --host cursor`** to install every skill as a native `/gstack-*` slash command in Cursor. This is the fork's addition — see [Other AI Agents](#other-ai-agents) below.
 
 ### Step 2: Team mode — auto-update for shared repos (recommended)
 
