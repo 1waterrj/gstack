@@ -75,4 +75,10 @@ describe('gstack-support-log', () => {
     expect(arr.length).toBe(1);
     expect(arr[0].ticket_ref).toBe('T-1');
   });
+
+  test('read --json on an empty/fresh log returns [] and exits 0 (rollup path)', () => {
+    const r = run(['read', '--json'], home);
+    expect(r.exitCode).toBe(0);
+    expect(JSON.parse(r.stdout.toString())).toEqual([]);
+  });
 });
