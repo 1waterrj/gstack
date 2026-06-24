@@ -6,6 +6,29 @@
 >
 > Everything below is Garry Tan's original gstack and its story — kept intact, with full credit to upstream.
 
+## Start a new project with Cursor
+
+```bash
+# 1. Install gstack for Cursor (one time, global)
+git clone --single-branch --depth 1 https://github.com/1waterrj/gstack.git ~/gstack
+cd ~/gstack && ./setup --host cursor
+```
+
+This writes every skill as a native command into `~/.cursor/commands/gstack-*.md`
+plus a `.cursor/rules/gstack.mdc` routing rule — available in **every** Cursor project.
+
+```
+# 2. Open your project in Cursor, type / in chat, and pick a command:
+/gstack-office-hours      → scope what you're building
+/gstack-plan-ceo-review   → pressure-test a feature idea
+/gstack-review            → review a branch's changes
+/gstack-qa                → QA a running URL
+/gstack-support           → triage a support ticket + draft a reply
+```
+
+That's it. Re-run `./setup --host cursor` after a `git pull` to update.
+(Prefer Claude Code? See [Install — 30 seconds](#install--30-seconds) below.)
+
 ---
 
 > "I don't think I've typed like a line of code probably since December, basically, which is an extremely large change." — [Andrej Karpathy](https://fortune.com/2026/03/21/andrej-karpathy-openai-cofounder-ai-agents-coding-state-of-psychosis-openclaw/), No Priors podcast, March 2026
