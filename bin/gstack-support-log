@@ -1,0 +1,87 @@
+#!/usr/bin/env bun
+/**
+ * gstack-support-log — append a redacted support record, or read records.
+ *
+ * Usage:
+ *   gstack-support-log append '<json record>'
+ *   gstack-support-log read [--since <window>] [--json]
+ *
+ * NON-INTERACTIVE. Stamps ts on append. Scans one_line_summary +
+ * contract_risk_reason with the redaction engine; a HIGH finding or oversize
+ * input exits 1 and writes nothing. Content-light by contract: callers pass a
+ * PII-scrubbed summary, never raw customer text.
+ *
+ * Record: { ts, ticket_ref, category, priority, sentiment, sentiment_intensity,
+ *           contract_risk, contract_risk_reason, theme_tags[], one_line_summary, status }
+ */
+import { appendFileSync, mkdirSync, readFileSync, existsSync } from 'fs';
+import { dirname, join } from 'path';
+import { homedir } from 'os';
+import { resolveSlug, flagValue } from '../lib/bin-context';
+import { scan } from '../lib/redact-engine';
+
+const HERE = import.meta.dir;
+const args = process.argv.slice(2);
+const cmd = args[0];
+
+const slug = resolveSlug(`${HERE}/gstack-slug`);
+const home = process.env.GSTACK_HOME || join(homedir(), '.gstack');
+const logPath = join(home, 'projects', slug, 'support.jsonl');
+
+const REQUIRED = ['ticket_ref', 'category', 'priority', 'one_line_summary'];
+
+function parseSince(win: string | undefined): number | null {
+  if (!win) return null;
+  const m = win.match(/^(\d+)([dhm])$/);
+  if (!m) { console.error(`invalid --since '${win}' (use e.g. 30d, 24h, 90m)`); process.exit(1); }
+  const n = Number(m[1]);
+  const ms = m[2] === 'd' ? 86_400_000 : m[2] === 'h' ? 3_600_000 : 60_000;
+  return n * ms;
+}
+
+if (cmd === 'append') {
+  let rec: Record<string, unknown>;
+  try { rec = JSON.parse(args[1] ?? ''); }
+  catch { console.error('append: argument must be a JSON object'); process.exit(1); }
+
+  for (const k of REQUIRED) {
+    if (rec[k] === undefined || rec[k] === null || rec[k] === '') {
+      console.error(`append: missing required field '${k}'`); process.exit(1);
+    }
+  }
+
+  // Redaction-on-write: scan only the free-text fields, fail closed on HIGH/oversize.
+  const probe = `${rec.one_line_summary ?? ''}\n${rec.contract_risk_reason ?? ''}`;
+  const result = scan(probe);
+  if (result.oversize || result.counts.HIGH > 0) {
+    console.error('append: BLOCKED — HIGH-severity secret detected in summary/reason; nothing written.');
+    process.exit(1);
+  }
+
+  rec.ts = new Date().toISOString();
+  mkdirSync(dirname(logPath), { recursive: true });
+  appendFileSync(logPath, JSON.stringify(rec) + '\n');
+  console.log(`logged ${rec.ticket_ref} → ${logPath}`);
+  process.exit(0);
+}
+
+if (cmd === 'read') {
+  if (!existsSync(logPath)) { console.log(args.includes('--json') ? '[]' : '(no support records yet)'); process.exit(0); }
+  const sinceMs = parseSince(flagValue(args, '--since'));
+  const cutoff = sinceMs ? Date.now() - sinceMs : null;
+  const records = readFileSync(logPath, 'utf-8').trim().split('\n').filter(Boolean)
+    .map((l) => JSON.parse(l))
+    .filter((r) => cutoff === null || (r.ts && Date.parse(r.ts) >= cutoff));
+
+  if (args.includes('--json')) {
+    console.log(JSON.stringify(records, null, 2));
+  } else {
+    for (const r of records) {
+      console.log(`${r.ts}  ${r.priority}  ${r.sentiment}  ${r.contract_risk ? 'RISK' : '    '}  [${(r.theme_tags || []).join(',')}]  ${r.one_line_summary}`);
+    }
+  }
+  process.exit(0);
+}
+
+console.error('usage: gstack-support-log append \'<json>\' | read [--since <window>] [--json]');
+process.exit(1);
