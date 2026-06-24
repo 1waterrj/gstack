@@ -31,8 +31,10 @@ describe('support skill template', () => {
     expect(tmpl).toContain('support_list');
   });
 
-  test('is drafts-only (no auto-send claim)', () => {
-    expect(tmpl.toLowerCase()).toContain('never');
+  test('is drafts-only — explicitly states replies are never auto-sent', () => {
+    // Meaningful guardrail assertion: the template must positively state the
+    // never-auto-send rule, not merely contain the words "never"/"draft".
+    expect(tmpl).toMatch(/never\s+sent\s+automatically|never\s+auto-?sent|do\s+not\s+send/i);
     expect(tmpl.toLowerCase()).toContain('draft');
   });
 
