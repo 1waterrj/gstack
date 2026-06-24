@@ -46,6 +46,7 @@ Detailed guides for every gstack skill — philosophy, workflow, and examples.
 | [`/pair-agent`](#pair-agent) | **Remote Agent Bridge** | Pair a remote AI agent (OpenClaw, Codex, Cursor, Hermes) with your browser. Scoped tunnel, locked allowlist, session token. |
 | [`/setup-gbrain`](#setup-gbrain) | **Memory Sync** | Set up gbrain for cross-machine session memory sync. One command from zero to live. |
 | [`/sync-gbrain`](#sync-gbrain) | **Keep Brain Current** | Refresh gbrain against this repo's code; teach the agent when to use `gbrain search`/`code-def` over Grep. Idempotent; safe to re-run. |
+| [`/support`](#support) | **Support Agent** | Triage an incoming support ticket, investigate the root cause, and draft a grounded customer reply. `--queue` batch-triages a queue of open tickets; `--rollup` summarizes themes, sentiment, and contract/churn risk for Product/Eng. Vendor-neutral, drafts-only. |
 | | | |
 | **Safety & Utility** | | |
 | [`/careful`](#safety--guardrails) | **Safety Guardrails** | Warns before destructive commands (rm -rf, DROP TABLE, force-push, git reset --hard). Override any warning. Common build cleanups whitelisted. |

@@ -66,6 +66,7 @@ Invoke them by name (e.g., `/office-hours`).
 | `/cso` | OWASP Top 10 + STRIDE security audit. |
 | `/setup-gbrain` | Set up gbrain for cross-machine session memory sync. |
 | `/sync-gbrain` | Keep gbrain current with this repo's code; refresh agent search guidance in CLAUDE.md. |
+| `/support` | Triage a support ticket, investigate, draft a grounded customer reply, log it. `--queue` batch-triages; `--rollup` summarizes themes and contract/churn risk. Vendor-neutral, drafts-only. |
 
 ### Browser + agent integration
 
