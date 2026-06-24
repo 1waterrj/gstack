@@ -267,6 +267,7 @@ Key routing rules:
 - Save progress → invoke /context-save
 - Resume context → invoke /context-restore
 - Author a backlog-ready spec/issue → invoke /spec
+- Support ticket / customer reply / triage → invoke /support
 ```
 
 Then commit the change: `git add CLAUDE.md && git commit -m "chore: add gstack skill routing rules to CLAUDE.md"`
@@ -818,13 +819,13 @@ Resolve the ticket in this order:
    DRAFT=$(mktemp); cat > "$DRAFT" <<'EOF'
    <your drafted reply>
    EOF
-   "${CLAUDE_SKILL_DIR}/../bin/gstack-redact" --from-file "$DRAFT"
+   ~/.claude/skills/gstack/bin/gstack-redact --from-file "$DRAFT"
    ```
    Resolve any HIGH finding before presenting (HIGH blocks; exit code 3).
 6. **Log a redacted record** (content-light — summary + classification, never
    raw customer text):
    ```bash
-   "${CLAUDE_SKILL_DIR}/../bin/gstack-support-log" append '{"ticket_ref":"...","category":"...","priority":"...","sentiment":"...","sentiment_intensity":2,"contract_risk":false,"contract_risk_reason":"","theme_tags":["..."],"one_line_summary":"...","status":"drafted"}'
+   ~/.claude/skills/gstack/bin/gstack-support-log append '{"ticket_ref":"...","category":"...","priority":"...","sentiment":"...","sentiment_intensity":2,"contract_risk":false,"contract_risk_reason":"","theme_tags":["..."],"one_line_summary":"...","status":"drafted"}'
    ```
    (The helper fails closed if a HIGH secret slipped into the summary/reason.)
 7. **Present** the classification + the drafted reply to the user. You do NOT
@@ -840,13 +841,14 @@ ticket_ref · category · priority · sentiment · contract_risk · draft path.
 
 ## Rollup mode (`--rollup [--since <window>]`)
 
-1. Read the log: `"${CLAUDE_SKILL_DIR}/../bin/gstack-support-log" read --since <window> --json` (default 30d).
+1. Read the log: `~/.claude/skills/gstack/bin/gstack-support-log read --since <window> --json` (default 30d).
 2. Aggregate: top themes (by `theme_tags`), sentiment trend, priority mix, and a
    ranked contract/churn-risk list with the recorded reasons.
 3. Write a markdown digest to
    `~/.gstack/projects/<slug>/support-rollups/<date>.md`.
 4. Offer (AskUserQuestion) to also open a GitHub issue for Product/Eng. If yes:
-   write the issue body to a temp file, scan it with `gstack-redact --from-file`
+   write the issue body to a temp file, scan it with
+   `~/.claude/skills/gstack/bin/gstack-redact --from-file`
    (resolve HIGH before sending), then `gh issue create` with the SAME file. If
    `gh` is unavailable, keep it file-only and say so.
 
