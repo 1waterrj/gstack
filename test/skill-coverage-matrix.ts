@@ -59,6 +59,11 @@ export const SKILL_COVERAGE: Record<string, SkillCoverage> = {
     gate: ['test/skill-coverage-floor.test.ts'],
     periodic: [],
   },
+  support: {
+    gate: ['test/support-skill.test.ts', 'test/support-log.test.ts', 'test/skill-coverage-floor.test.ts'],
+    periodic: [],
+    rationale: 'Vendor-neutral support skill: static template invariants + the gstack-support-log append/read + redaction-on-write helper tests. No paid eval in v1 (drafts-only, human-reviewed).',
+  },
   browse: {
     gate: ['test/skill-coverage-floor.test.ts'],
     periodic: [],
