@@ -66,6 +66,19 @@ Resolve the ticket in this order:
 `--queue` additionally needs a `support_list` command (returns open ids, or
 `{id, subject}` objects). Apply the same read→ask→persist rule.
 
+### Provisioning intake when none exists
+
+If the project has no way for customers to submit tickets yet, don't prescribe
+one — the right pipeline is specific to what's being built. Offer to provision
+it (or hand off to the engineering flow), and let the choice be the user's:
+anything that produces tickets in the canonical contract above works. Common
+starting points: GitHub Issues (a `support_fetch`/`support_list` wired to
+`gh issue view`/`gh issue list`), an in-app submission form posting to a small
+endpoint or table, an inbound-email parser, or a shared CSV. Whatever you build,
+make it emit the contract (or be readable by `support_fetch`/`support_list`) so
+the rest of this skill consumes it with no glue, then persist the commands to
+CLAUDE.md.
+
 ## Per-ticket workflow
 
 1. Acquire the ticket (Intake).
