@@ -263,6 +263,11 @@
       "routing": "Files the issue,\noptionally spawns a Claude Code agent in a fresh worktree, and lets /ship close\nthe source issue on merge. Use when asked to \"spec this out\", \"file an issue\",\n\"write up a ticket\", \"make this a GitHub issue\", or \"turn this into a backlog item\".",
       "voice_line": null
     },
+    "support": {
+      "lead": "App support agent.",
+      "routing": "Triage an incoming support ticket, investigate the root\ncause, and draft a customer reply grounded in evidence — never fabricated.\nBatch mode (--queue) triages a queue of open tickets; rollup mode (--rollup)\nsummarizes themes, sentiment trend, and contract/churn risk for Product/Eng.\nVendor-neutral: paste a ticket, pass a file/URL, or configure support_fetch /\nsupport_list in CLAUDE.md. Replies are drafted for your review, never sent.\nUse when asked to \"handle this support ticket\", \"triage this\", \"draft a reply\nto this customer\", \"support rollup\", or \"what are customers complaining about\".",
+      "voice_line": null
+    },
     "sync-gbrain": {
       "lead": "Keep gbrain current with this repo's code and refresh agent search guidance in CLAUDE.md. Wraps the gstack-gbrain-sync orchestrator with state",
       "routing": "probing, native code-surface registration, capability checks,\nand a verdict block. Re-runnable, idempotent. Use when: \"sync gbrain\",\n\"refresh gbrain\", \"re-index this repo\", \"gbrain search isn't finding\nthings\".",
